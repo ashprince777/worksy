@@ -1,28 +1,30 @@
 @import "tailwindcss";
 
 @theme {
+  --color-brand-royal: #2030e8;
   --color-brand-blue: #2563eb;
-  --color-brand-sky: #0ea5e9;
-  --color-brand-navy: #090e24;
-  --color-brand-cyan: #38bdf8;
+  --color-brand-sky: #1e8efe;
+  --color-brand-navy: #081226;
+  --color-brand-midnight: #0b1739;
+  --color-brand-cloud: #c8cfdf;
 
   /* Remap theme palette to Worksy official Royal Blue & Sky/Cyan brand spectrum */
-  --color-teal-50: #eff6ff;
+  --color-teal-50: #eff4ff;
   --color-teal-100: #dbeafe;
   --color-teal-200: #bfdbfe;
   --color-teal-300: #93c5fd;
   --color-teal-400: #38bdf8;
-  --color-teal-500: #0ea5e9;
+  --color-teal-500: #1e8efe;
   --color-teal-600: #2563eb;
-  --color-teal-700: #1d4ed8;
-  --color-teal-800: #1e40af;
-  --color-teal-900: #1e3a8a;
-  --color-teal-950: #0b132b;
+  --color-teal-700: #2030e8;
+  --color-teal-800: #1a27b8;
+  --color-teal-900: #101c66;
+  --color-teal-950: #081226;
 }
 
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
+  --foreground: #081226;
 }
 
 body {

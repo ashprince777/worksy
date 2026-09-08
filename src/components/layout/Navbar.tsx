@@ -88,7 +88,7 @@ export function Navbar() {
           {/* Brand Logo */}
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center group py-1">
-              <WorksyLogo variant="light" height={36} />
+              <WorksyLogo variant="light" height={46} />
             </Link>
 
             {/* City Selector */}

@@ -61,8 +61,8 @@ export default async function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white pt-12 sm:pt-20 pb-20 sm:pb-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-teal-500/15 via-transparent to-transparent pointer-events-none" />
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#081226] via-[#0b1739] to-[#060c1d] text-white pt-12 sm:pt-20 pb-20 sm:pb-28">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-600/25 via-sky-500/10 to-transparent pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto space-y-6">
@@ -72,9 +72,9 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-              Get Work Done. <br />
+              Work Smarter Together. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-blue-200">
-                Services at your doorstep.
+                A simpler way to get work done.
               </span>
             </h1>
 

@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Sparkles,
 } from "lucide-react";
+import { WorksyLogo } from "@/components/layout/WorksyLogo";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -67,8 +68,8 @@ export default function RegisterPage() {
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 p-8 sm:p-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-600 to-teal-400 items-center justify-center text-white font-black text-2xl shadow-lg shadow-teal-500/30 mb-4">
-            W
+          <div className="flex justify-center mb-4">
+            <WorksyLogo variant="light" height={42} showLink />
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             Create your Worksy Account

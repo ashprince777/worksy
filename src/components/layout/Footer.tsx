@@ -4,9 +4,9 @@ import { WorksyLogo } from "@/components/layout/WorksyLogo";
 
 export function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
+    <footer className="bg-[#0e1a39] text-slate-400 text-sm border-t border-[#1c2e5c]">
       {/* Trust Highlights Strip */}
-      <div className="border-b border-slate-800">
+      <div className="border-b border-[#1c2e5c]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="flex items-center gap-3">
@@ -57,10 +57,9 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Info */}
           <div className="col-span-2 space-y-4">
-            <WorksyLogo variant="white" height={36} showLink />
+            <WorksyLogo variant="footer" height={46} showLink />
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              Worksy is a multi-service local services marketplace connecting
-              customers with verified local professionals. Trusted services. Made simple.
+              Worksy connects you with verified local service professionals. A simpler way to get work done.
             </p>
             <div className="pt-2 text-xs text-slate-500">
               <p>Worksy Platform Operations Inc.</p>
@@ -112,7 +111,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-800 text-xs text-center text-slate-500">
+        <div className="mt-12 pt-8 border-t border-[#1c2e5c] text-xs text-center text-slate-500">
           <p>© 2026 Worksy Technologies. All rights reserved. Trusted services. Made simple.</p>
         </div>
       </div>

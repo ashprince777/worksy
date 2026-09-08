@@ -20,11 +20,20 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    let userId = user?.id;
 
-    const userId = user.id;
+    if (!userId) {
+      // Support inquiries from guest visitors fallback to system/first user
+      const fallbackUser =
+        (await db.user.findFirst({ where: { role: "ADMIN" }, select: { id: true } })) ||
+        (await db.user.findFirst({ select: { id: true } }));
+
+      if (fallbackUser) {
+        userId = fallbackUser.id;
+      } else {
+        return NextResponse.json({ error: "System operator unavailable" }, { status: 500 });
+      }
+    }
 
     const { subject, description, category, priority, bookingId } = await request.json();
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { Star, ShieldCheck, Clock, Award, ArrowRight, UserCheck } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { ProfessionalsSearchBar } from "@/components/professional/ProfessionalsSearchBar";
 
 export default async function ProfessionalsDirectoryPage({
   searchParams,
@@ -45,16 +46,7 @@ export default async function ProfessionalsDirectoryPage({
 
         {/* Search input for professionals */}
         <div className="pt-2 max-w-md mx-auto">
-          <form method="GET" action="/professionals" className="relative">
-            <input
-              type="text"
-              name="q"
-              defaultValue={q}
-              placeholder="Search professional by name or specialty..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            <div className="absolute left-3.5 top-3 text-slate-400">🔍</div>
-          </form>
+          <ProfessionalsSearchBar initialQuery={q} />
         </div>
       </div>
 

@@ -10,9 +10,11 @@ export default function ContactPage() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
     try {
       const res = await fetch("/api/support/tickets", {
@@ -27,7 +29,12 @@ export default function ContactPage() {
       });
       if (res.ok) {
         setSubmitted(true);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to send message. Please try again.");
       }
+    } catch {
+      setError("Network error. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -90,7 +97,14 @@ export default function ContactPage() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+            <div className="space-y-4">
+              {error && (
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="font-bold text-slate-700 block mb-1">Your Full Name</label>
                 <input
@@ -148,7 +162,8 @@ export default function ContactPage() {
                 <span>{loading ? "Sending..." : "Send Message"}</span>
               </button>
             </form>
-          )}
+          </div>
+        )}
         </div>
       </div>
     </div>

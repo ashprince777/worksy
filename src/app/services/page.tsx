@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search, Filter, Sparkles, Layers } from "lucide-react";
 import { ServiceService } from "@/services/service.service";
 import { ServiceCard } from "@/components/customer/ServiceCard";
+import { CatalogSearchBar } from "@/components/customer/CatalogSearchBar";
 
 export default async function ServicesPage({
   searchParams,
@@ -63,7 +64,7 @@ export default async function ServicesPage({
         {/* Category Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
           <Link
-            href="/services"
+            href={q ? `/services?q=${encodeURIComponent(q)}` : "/services"}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
               !categorySlug
                 ? "bg-teal-600 text-white"
@@ -89,17 +90,7 @@ export default async function ServicesPage({
 
         {/* Search & Sort Controls */}
         <div className="flex items-center gap-3 shrink-0">
-          <form method="GET" action="/services" className="relative flex-1 sm:w-64">
-            {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              name="q"
-              defaultValue={q}
-              placeholder="Search in services..."
-              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-teal-500"
-            />
-          </form>
+          <CatalogSearchBar initialQuery={q} categorySlug={categorySlug} />
         </div>
       </div>
 

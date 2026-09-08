@@ -43,12 +43,21 @@ export function BookingWizard({
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
     defaultVariantId || service.variants?.[0]?.id || null
   );
+  // Address state
+  const [addressesList, setAddressesList] = useState<any[]>(savedAddresses || []);
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
     savedAddresses[0]?.id || ""
   );
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(
+    !savedAddresses || savedAddresses.length === 0
+  );
   const [newStreet, setNewStreet] = useState("");
+  const [newLandmark, setNewLandmark] = useState("");
   const [newCity, setNewCity] = useState("Bangalore");
   const [newPincode, setNewPincode] = useState("560034");
+  const [newLabel, setNewLabel] = useState("Home");
+  const [addressError, setAddressError] = useState("");
+  const [isSavingAddress, setIsSavingAddress] = useState(false);
 
   // Date & Slot
   const todayStr = new Date().toISOString().split("T")[0];
@@ -89,6 +98,54 @@ export function BookingWizard({
   const platformFee = 49;
   const finalTotal = taxable + tax + platformFee;
 
+  const handleNextStep = async () => {
+    // Step 2 validation & automatic address creation if adding new
+    if (step === 2) {
+      setAddressError("");
+      if (isAddingNewAddress || !selectedAddressId) {
+        if (!newStreet.trim() || !newCity.trim() || !newPincode.trim()) {
+          setAddressError("Please enter your street address, city, and pincode.");
+          return;
+        }
+
+        setIsSavingAddress(true);
+        try {
+          const res = await fetch("/api/addresses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              label: newLabel,
+              street: newStreet.trim(),
+              landmark: newLandmark.trim(),
+              city: newCity.trim(),
+              postalCode: newPincode.trim(),
+              isDefault: addressesList.length === 0,
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to save address");
+          }
+
+          const saved = await res.json();
+          setAddressesList((prev) => [...prev, saved]);
+          setSelectedAddressId(saved.id);
+          setIsAddingNewAddress(false);
+          setStep(3);
+          return;
+        } catch (err: any) {
+          setAddressError(err.message || "Failed to save address");
+          return;
+        } finally {
+          setIsSavingAddress(false);
+        }
+      }
+    }
+
+    setStep((s) => s + 1);
+  };
+
   const handleApplyCoupon = async () => {
     if (!couponCode) return;
     setCouponError("");
@@ -110,6 +167,12 @@ export function BookingWizard({
   };
 
   const handleCreateBooking = async () => {
+    if (!selectedAddressId) {
+      alert("Please select a valid service address before confirming.");
+      setStep(2);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
@@ -200,36 +263,53 @@ export function BookingWizard({
             </div>
 
             <div className="space-y-3">
-              {service.variants?.map((v: any) => (
-                <label
-                  key={v.id}
-                  onClick={() => setSelectedVariantId(v.id)}
-                  className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
-                    selectedVariantId === v.id
-                      ? "border-teal-600 bg-teal-50/50 shadow-sm"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
-                >
+              {service.variants && service.variants.length > 0 ? (
+                service.variants.map((v: any) => (
+                  <label
+                    key={v.id}
+                    onClick={() => setSelectedVariantId(v.id)}
+                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
+                      selectedVariantId === v.id
+                        ? "border-teal-600 bg-teal-50/50 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                          selectedVariantId === v.id
+                            ? "border-teal-600 bg-teal-600 text-white"
+                            : "border-slate-300"
+                        }`}
+                      >
+                        {selectedVariantId === v.id && <Check className="w-3.5 h-3.5" />}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">{v.name}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{v.description}</p>
+                      </div>
+                    </div>
+                    <span className="font-black text-slate-900 text-sm sm:text-base">
+                      {formatCurrency(v.price)}
+                    </span>
+                  </label>
+                ))
+              ) : (
+                <div className="p-4 rounded-2xl border border-teal-600 bg-teal-50/50 shadow-sm flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                        selectedVariantId === v.id
-                          ? "border-teal-600 bg-teal-600 text-white"
-                          : "border-slate-300"
-                      }`}
-                    >
-                      {selectedVariantId === v.id && <Check className="w-3.5 h-3.5" />}
+                    <div className="w-5 h-5 rounded-full border border-teal-600 bg-teal-600 text-white flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900">{v.name}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">{v.description}</p>
+                      <h4 className="font-bold text-sm text-slate-900">{service.name} (Standard)</h4>
+                      <p className="text-xs text-slate-500 mt-0.5">{service.shortDescription || "Standard service care package"}</p>
                     </div>
                   </div>
                   <span className="font-black text-slate-900 text-sm sm:text-base">
-                    {formatCurrency(v.price)}
+                    {formatCurrency(service.startingPrice)}
                   </span>
-                </label>
-              ))}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -237,60 +317,154 @@ export function BookingWizard({
         {/* STEP 2: SELECT ADDRESS */}
         {step === 2 && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">
-                2. Select Service Address
-              </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Where should our verified professional arrive?
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {savedAddresses.map((addr) => (
-                <label
-                  key={addr.id}
-                  onClick={() => setSelectedAddressId(addr.id)}
-                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
-                    selectedAddressId === addr.id
-                      ? "border-teal-600 bg-teal-50/50 shadow-sm"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">
+                  2. Select Service Address
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Where should our verified professional arrive?
+                </p>
+              </div>
+              {addressesList.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNewAddress(!isAddingNewAddress)}
+                  className="text-xs font-bold text-teal-600 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-xl transition-colors"
                 >
-                  <div
-                    className={`w-5 h-5 rounded-full border flex items-center justify-center mt-0.5 ${
-                      selectedAddressId === addr.id
-                        ? "border-teal-600 bg-teal-600 text-white"
-                        : "border-slate-300"
-                    }`}
-                  >
-                    {selectedAddressId === addr.id && <Check className="w-3.5 h-3.5" />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
-                        {addr.label}
-                      </span>
-                      {addr.isDefault && (
-                        <span className="text-[10px] text-teal-700 font-semibold">
-                          Default Address
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-600 mt-1">{addr.street}</p>
-                    <p className="text-xs text-slate-400">
-                      {addr.city}, {addr.state} - {addr.postalCode}
-                    </p>
-                  </div>
-                </label>
-              ))}
-
-              {savedAddresses.length === 0 && (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-800">
-                  Defaulting to: Flat 402, Green Glen Layout, Bellandur, Bangalore - 560103
-                </div>
+                  {isAddingNewAddress ? "Use Saved Address" : "+ Add New Address"}
+                </button>
               )}
             </div>
+
+            {addressError && (
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium">
+                {addressError}
+              </div>
+            )}
+
+            {!isAddingNewAddress && addressesList.length > 0 ? (
+              <div className="space-y-3">
+                {addressesList.map((addr) => (
+                  <label
+                    key={addr.id}
+                    onClick={() => {
+                      setSelectedAddressId(addr.id);
+                      setAddressError("");
+                    }}
+                    className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
+                      selectedAddressId === addr.id
+                        ? "border-teal-600 bg-teal-50/50 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-full border flex items-center justify-center mt-0.5 ${
+                        selectedAddressId === addr.id
+                          ? "border-teal-600 bg-teal-600 text-white"
+                          : "border-slate-300"
+                      }`}
+                    >
+                      {selectedAddressId === addr.id && <Check className="w-3.5 h-3.5" />}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
+                          {addr.label}
+                        </span>
+                        {addr.isDefault && (
+                          <span className="text-[10px] text-teal-700 font-semibold">
+                            Default Address
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">{addr.street}</p>
+                      <p className="text-xs text-slate-400">
+                        {addr.city}, {addr.state} - {addr.postalCode}
+                      </p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+                  Enter Service Location Details
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Street / Flat / Society / Area *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newStreet}
+                      onChange={(e) => setNewStreet(e.target.value)}
+                      placeholder="e.g. Flat 402, Green Glen Layout, Bellandur"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Landmark (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={newLandmark}
+                      onChange={(e) => setNewLandmark(e.target.value)}
+                      placeholder="e.g. Near EcoSpace Tech Park"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Postal Code (Pincode) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newPincode}
+                      onChange={(e) => setNewPincode(e.target.value)}
+                      placeholder="e.g. 560103"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      City *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newCity}
+                      onChange={(e) => setNewCity(e.target.value)}
+                      placeholder="Bangalore"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Address Label
+                    </label>
+                    <select
+                      value={newLabel}
+                      onChange={(e) => setNewLabel(e.target.value)}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                    >
+                      <option value="Home">Home</option>
+                      <option value="Office">Office</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -681,12 +855,12 @@ export function BookingWizard({
 
         {/* Bottom Wizard Navigation Buttons (Steps 1 to 9) */}
         {step < 10 && (
-          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
+          <div className="mt-8 pt-4 pb-2 border-t border-slate-200 flex items-center justify-between gap-4 sticky bottom-0 bg-white/95 backdrop-blur-sm -mx-6 px-6 sm:-mx-8 sm:px-8 z-20">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -698,10 +872,11 @@ export function BookingWizard({
             {step < 9 ? (
               <button
                 type="button"
-                onClick={() => setStep(step + 1)}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm"
+                onClick={handleNextStep}
+                disabled={isSavingAddress}
+                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50"
               >
-                <span>Continue</span>
+                <span>{isSavingAddress ? "Saving Address..." : "Continue"}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (

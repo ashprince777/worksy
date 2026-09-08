@@ -15,9 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Worksy — Trusted services. Made simple.",
+  title: "Worksy — Get Work Done | Trusted Doorstep Services",
   description:
-    "Book verified local service professionals for AC repair, electrician, cleaning, plumbing, beauty, health, and home maintenance.",
+    "Book verified local service professionals for AC repair, electrician, cleaning, plumbing, beauty, health, and home maintenance. Get work done with Worksy.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logo-icon.png",
+  },
 };
 
 export default function RootLayout({

@@ -72,8 +72,8 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
-              Trusted professionals. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-teal-300 to-emerald-400">
+              Get Work Done. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-blue-200">
                 Services at your doorstep.
               </span>
             </h1>
@@ -310,7 +310,7 @@ export default async function HomePage() {
 
             <Link
               href="/services"
-              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-sm transition-all"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-md transition-all"
             >
               <span>Explore Verified Services</span>
               <ArrowRight className="w-4 h-4" />
@@ -379,7 +379,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <Link
               href="/professional"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-sm shadow-md transition-all shrink-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-md transition-all shrink-0"
             >
               <span>Join as Partner</span>
               <ArrowRight className="w-4 h-4" />

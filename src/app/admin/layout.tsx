@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Briefcase,
 } from "lucide-react";
+import { WorksyLogo } from "@/components/layout/WorksyLogo";
 
 export default async function AdminLayout({
   children,
@@ -31,14 +32,12 @@ export default async function AdminLayout({
           {/* Admin Header */}
           <div className="p-6 border-b border-slate-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 text-sm">
-                A
-              </div>
+              <WorksyLogo variant="icon" height={32} />
               <div>
                 <span className="text-lg font-black text-white tracking-tight">
                   WORKSY OPS
                 </span>
-                <span className="block text-[10px] text-amber-400 font-semibold uppercase tracking-wider">
+                <span className="block text-[10px] text-teal-400 font-semibold uppercase tracking-wider">
                   Enterprise Admin
                 </span>
               </div>

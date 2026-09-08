@@ -18,6 +18,7 @@ import {
   Award,
   Settings,
 } from "lucide-react";
+import { WorksyLogo } from "./WorksyLogo";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -86,18 +87,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
           {/* Brand Logo */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-teal-400 flex items-center justify-center text-white font-black text-xl shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
-                W
-              </div>
-              <div>
-                <span className="text-2xl font-black tracking-tight text-slate-900">
-                  WORKSY
-                </span>
-                <span className="block text-[10px] uppercase font-semibold text-teal-600 tracking-wider -mt-1">
-                  Trusted Services
-                </span>
-              </div>
+            <Link href="/" className="flex items-center group py-1">
+              <WorksyLogo variant="light" height={36} />
             </Link>
 
             {/* City Selector */}

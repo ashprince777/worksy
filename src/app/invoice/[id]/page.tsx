@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Printer, ArrowLeft, ShieldCheck } from "lucide-react";
+import { WorksyLogo } from "@/components/layout/WorksyLogo";
 
 export default async function InvoicePage(props: {
   params: Promise<{ id: string }>;
@@ -63,18 +64,8 @@ export default async function InvoicePage(props: {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-b border-slate-200 pb-8">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center font-black text-white text-base">
-                W
-              </div>
-              <span className="text-2xl font-black text-slate-900 tracking-tight">
-                WORKSY
-              </span>
-            </div>
-            <p className="text-xs text-slate-400">
-              Trusted services. Made simple.
-            </p>
-            <p className="text-[11px] text-slate-500">
+            <WorksyLogo variant="light" height={32} />
+            <p className="text-[11px] text-slate-500 pt-1">
               GSTIN: 29AAACW9988Z1ZP • Bangalore Central Hub
             </p>
           </div>

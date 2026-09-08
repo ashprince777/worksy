@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShieldCheck, Clock, Award, Headphones } from "lucide-react";
+import { WorksyLogo } from "@/components/layout/WorksyLogo";
 
 export function Footer() {
   return (
@@ -23,8 +24,8 @@ export function Footer() {
                 <Award className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">Worksy Warranty</h4>
-                <p className="text-xs text-slate-400">Up to 365 days service guarantee</p>
+                <h4 className="text-white font-semibold text-sm">Worksy Guarantee</h4>
+                <p className="text-xs text-slate-400">Up to ₹10,000 damage cover</p>
               </div>
             </div>
 
@@ -34,17 +35,17 @@ export function Footer() {
               </div>
               <div>
                 <h4 className="text-white font-semibold text-sm">On-Time Arrival</h4>
-                <p className="text-xs text-slate-400">Prompt doorstep delivery</p>
+                <p className="text-xs text-slate-400">Or ₹100 credit added</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <Headphones className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="text-white font-semibold text-sm">Dedicated Support</h4>
-                <p className="text-xs text-slate-400">Instant resolution desk</p>
+                <p className="text-xs text-slate-400">7 AM – 11 PM every day</p>
               </div>
             </div>
           </div>
@@ -56,14 +57,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Info */}
           <div className="col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-slate-900 font-black text-xl">
-                W
-              </div>
-              <span className="text-2xl font-black tracking-tight text-white">
-                WORKSY
-              </span>
-            </Link>
+            <WorksyLogo variant="white" height={36} showLink />
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
               Worksy is a multi-service local services marketplace connecting
               customers with verified local professionals. Trusted services. Made simple.

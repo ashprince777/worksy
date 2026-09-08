@@ -20,7 +20,7 @@ async function manualE2EVerification() {
   console.log(`  ✓ Current reward points: ${customer.reward?.pointsBalance || 0}`);
   const address = customer.addresses[0];
   if (!address) throw new Error("No customer address available");
-  console.log(`  ✓ Delivery address selected: ${address.street}, ${address.city} (${address.pincode})`);
+  console.log(`  ✓ Delivery address selected: ${address.street}, ${address.city} (${address.postalCode})`);
 
   // 2. BROWSE CATALOG & SELECT SERVICE
   console.log("\n👉 STEP 2: Browse Catalog & Select Service");
@@ -40,7 +40,7 @@ async function manualE2EVerification() {
 
   const pricing = PricingEngine.calculateTotals(
     [{ serviceId: service.id, title: service.name, unitPrice: service.startingPrice, quantity: 1 }],
-    coupon
+    coupon as any
   );
   console.log(`  ✓ Line items subtotal: ₹${pricing.subtotal}`);
   console.log(`  ✓ Coupon discount applied: -₹${pricing.discount}`);
@@ -162,18 +162,20 @@ async function manualE2EVerification() {
 
   // 8. TAX INVOICE GENERATION
   console.log("\n👉 STEP 8: Generate GST Tax Invoice");
-  const invoice = await db.invoice.create({
-    data: {
-      bookingId: newBooking.id,
-      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
-      subtotal: newBooking.totalAmount,
-      taxAmount: newBooking.taxAmount,
-      discountAmount: newBooking.discountAmount,
-      platformFee: newBooking.platformFee,
-      totalAmount: newBooking.finalAmount,
-      issuedDate: new Date(),
-    },
-  });
+  const invoice =
+    (await db.invoice.findUnique({ where: { bookingId: newBooking.id } })) ||
+    (await db.invoice.create({
+      data: {
+        bookingId: newBooking.id,
+        invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+        subtotal: newBooking.totalAmount,
+        taxAmount: newBooking.taxAmount,
+        discountAmount: newBooking.discountAmount,
+        platformFee: newBooking.platformFee,
+        totalAmount: newBooking.finalAmount,
+        issuedDate: new Date(),
+      },
+    }));
   console.log(`  ✓ Official Tax Invoice issued: ${invoice.invoiceNumber} (Total: ₹${invoice.totalAmount})`);
 
   // 9. CUSTOMER REVIEW & REWARD CREDITING
@@ -183,7 +185,7 @@ async function manualE2EVerification() {
       bookingId: newBooking.id,
       customerId: customer.id,
       professionalId: bestPro.professional.id,
-      rating: 5,
+      overallRating: 5,
       comment: "Super professional work! Arrived right on time and cleaned thoroughly.",
     },
   });

@@ -5,19 +5,11 @@ import { db } from "@/lib/db";
 export async function PATCH(request: Request) {
   try {
     const user = await getCurrentUser();
-    let proProfileId = user?.professionalProfileId;
-
-    if (!proProfileId) {
-      const demoPro = await db.user.findUnique({
-        where: { email: "pro@worksy.com" },
-        include: { professionalProfile: true },
-      });
-      proProfileId = demoPro?.professionalProfile?.id;
+    if (!user || !user.professionalProfileId) {
+      return NextResponse.json({ error: "Unauthorized: Professional account required" }, { status: 401 });
     }
 
-    if (!proProfileId) {
-      return NextResponse.json({ error: "Professional profile not found" }, { status: 404 });
-    }
+    const proProfileId = user.professionalProfileId;
 
     const { bio, experienceYears, hourlyRate } = await request.json();
 

@@ -9,11 +9,11 @@ export async function DELETE(
   try {
     const { id } = await props.params;
     const user = await getCurrentUser();
-    const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     await db.address.deleteMany({
       where: { id, userId },
@@ -32,11 +32,11 @@ export async function PATCH(
   try {
     const { id } = await props.params;
     const user = await getCurrentUser();
-    const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     // Set all other addresses to not default
     await db.address.updateMany({

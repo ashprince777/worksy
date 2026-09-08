@@ -4,14 +4,12 @@ import { db } from "@/lib/db";
 
 export async function GET() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-  if (!userId) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const addresses = await db.address.findMany({
-    where: { userId },
+    where: { userId: user.id },
     orderBy: { isDefault: "desc" },
   });
 
@@ -21,11 +19,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
-    const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     const { label, street, landmark, city, state, postalCode, isDefault } = await request.json();
 

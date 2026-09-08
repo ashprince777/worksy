@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ServiceService } from "@/services/service.service";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
@@ -20,13 +20,12 @@ export default async function BookServicePage(props: {
     notFound();
   }
 
-  // Fetch addresses for logged in user, or demo customer addresses
-  const targetUserId = user ? user.id : (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
+  if (!user) {
+    redirect(`/login?redirect=/book/${serviceId}${variantId ? `?variantId=${variantId}` : ""}`);
+  }
 
   const [addresses, matchedPros] = await Promise.all([
-    targetUserId
-      ? db.address.findMany({ where: { userId: targetUserId } })
-      : [],
+    db.address.findMany({ where: { userId: user.id } }),
     db.professionalProfile.findMany({
       where: {
         services: { some: { serviceId: service.id } },
@@ -46,7 +45,7 @@ export default async function BookServicePage(props: {
         defaultVariantId={variantId}
         savedAddresses={addresses}
         matchedPros={matchedPros}
-        customerId={targetUserId || ""}
+        customerId={user.id}
       />
     </div>
   );

@@ -4,14 +4,12 @@ import { db } from "@/lib/db";
 
 export async function GET() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-  if (!userId) {
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const tickets = await db.supportTicket.findMany({
-    where: { customerId: userId },
+    where: { customerId: user.id },
     orderBy: { createdAt: "desc" },
     include: { messages: true },
   });
@@ -22,11 +20,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
-    const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     const { subject, description, category, priority, bookingId } = await request.json();
 

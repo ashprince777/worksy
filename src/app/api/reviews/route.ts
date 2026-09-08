@@ -6,11 +6,11 @@ import { BookingEngine } from "@/core/booking-engine";
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
-    const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
-
-    if (!userId) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     const {
       bookingId,

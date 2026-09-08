@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { CustomerBookingsView } from "@/components/customer/CustomerBookingsView";
+import { redirect } from "next/navigation";
 
 export default async function CustomerBookingsPage() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
+  if (!user) {
+    redirect("/login?redirect=/dashboard/bookings");
+  }
+
+  const userId = user.id;
 
   const bookings = await db.booking.findMany({
     where: { customerId: userId },

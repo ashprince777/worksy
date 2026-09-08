@@ -15,23 +15,16 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { BookingEngine } from "@/core/booking-engine";
+import { redirect } from "next/navigation";
 
 export default async function CustomerDashboardPage() {
   const user = await getCurrentUser();
 
-  // If not logged in, fetch demo customer
-  const targetUser = user || (await db.user.findUnique({
-    where: { email: "customer@worksy.com" },
-    include: { reward: true },
-  }));
-
-  if (!targetUser) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-        User profile not found.
-      </div>
-    );
+  if (!user) {
+    redirect("/login?redirect=/dashboard");
   }
+
+  const targetUser = user;
 
   const [bookings, reward] = await Promise.all([
     db.booking.findMany({

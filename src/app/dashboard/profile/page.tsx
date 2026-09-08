@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { CustomerProfileView } from "@/components/customer/CustomerProfileView";
+import { redirect } from "next/navigation";
 
 export default async function CustomerProfilePage() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
+  if (!user) {
+    redirect("/login?redirect=/dashboard/profile");
+  }
+
+  const userId = user.id;
 
   const [customer, addresses] = await Promise.all([
     db.user.findUnique({

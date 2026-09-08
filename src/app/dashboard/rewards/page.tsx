@@ -2,10 +2,15 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { Award, Gift, Copy, ArrowRight, CheckCircle2 } from "lucide-react";
 import { CustomerRewardsView } from "@/components/customer/CustomerRewardsView";
+import { redirect } from "next/navigation";
 
 export default async function CustomerRewardsPage() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
+  if (!user) {
+    redirect("/login?redirect=/dashboard/rewards");
+  }
+
+  const userId = user.id;
 
   let reward = await db.reward.findUnique({
     where: { userId },

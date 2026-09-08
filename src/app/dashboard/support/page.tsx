@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { CustomerSupportView } from "@/components/customer/CustomerSupportView";
+import { redirect } from "next/navigation";
 
 export default async function CustomerSupportPage() {
   const user = await getCurrentUser();
-  const userId = user?.id || (await db.user.findUnique({ where: { email: "customer@worksy.com" } }))?.id;
+  if (!user) {
+    redirect("/login?redirect=/dashboard/support");
+  }
+
+  const userId = user.id;
 
   const [tickets, warrantyClaims, completedBookings] = await Promise.all([
     db.supportTicket.findMany({

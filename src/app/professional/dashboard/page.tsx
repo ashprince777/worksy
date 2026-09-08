@@ -2,26 +2,20 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { ProfessionalService } from "@/services/professional.service";
 import { ProfessionalDashboardView } from "@/components/professional/ProfessionalDashboardView";
+import { redirect } from "next/navigation";
 
 export default async function ProfessionalDashboardPage() {
   const user = await getCurrentUser();
 
-  // If not signed in as pro, fallback to demo professional (Rajesh Kumar)
-  let targetProId = user?.professionalProfileId;
-  if (!targetProId) {
-    const demoProUser = await db.user.findUnique({
-      where: { email: "pro@worksy.com" },
-      include: { professionalProfile: true },
-    });
-    targetProId = demoProUser?.professionalProfile?.id;
+  if (!user) {
+    redirect("/login?redirect=/professional/dashboard");
   }
 
+  let targetProId = user.professionalProfileId;
+
+  // If user is not yet a professional, redirect them to onboarding wizard
   if (!targetProId) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-        Professional profile not found.
-      </div>
-    );
+    redirect("/professional/onboarding");
   }
 
   const [metricsData, jobs] = await Promise.all([

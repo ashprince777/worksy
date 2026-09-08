@@ -1,17 +1,17 @@
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { ProfessionalCalendarView } from "@/components/professional/ProfessionalCalendarView";
+import { redirect } from "next/navigation";
 
 export default async function ProfessionalCalendarPage() {
   const user = await getCurrentUser();
-  let proId = user?.professionalProfileId;
+  if (!user) {
+    redirect("/login?redirect=/professional/dashboard/calendar");
+  }
 
+  const proId = user.professionalProfileId;
   if (!proId) {
-    const demoPro = await db.user.findUnique({
-      where: { email: "pro@worksy.com" },
-      include: { professionalProfile: true },
-    });
-    proId = demoPro?.professionalProfile?.id;
+    redirect("/professional/onboarding");
   }
 
   const availabilities = await db.professionalAvailability.findMany({

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -11,11 +13,16 @@ import {
   Briefcase,
 } from "lucide-react";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+    redirect("/login?redirect=/admin/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col lg:flex-row">
       {/* Enterprise Sidebar */}

@@ -1,17 +1,17 @@
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { ProfessionalProfileEditorView } from "@/components/professional/ProfessionalProfileEditorView";
+import { redirect } from "next/navigation";
 
 export default async function ProfessionalProfileEditorPage() {
   const user = await getCurrentUser();
-  let proId = user?.professionalProfileId;
+  if (!user) {
+    redirect("/login?redirect=/professional/dashboard/profile");
+  }
 
+  const proId = user.professionalProfileId;
   if (!proId) {
-    const demoPro = await db.user.findUnique({
-      where: { email: "pro@worksy.com" },
-      include: { professionalProfile: true },
-    });
-    proId = demoPro?.professionalProfile?.id;
+    redirect("/professional/onboarding");
   }
 
   const profile = await db.professionalProfile.findUnique({
